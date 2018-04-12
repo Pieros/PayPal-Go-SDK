@@ -69,6 +69,8 @@ func (c *Client) CreateBillingAgreement(a BillingAgreement) (*CreateAgreementRes
 	if err != nil {
 		return response, err
 	}
+
+	req.SetBasicAuth(c.ClientID, c.Secret)
 	err = c.SendWithAuth(req, response)
 	return response, err
 }
