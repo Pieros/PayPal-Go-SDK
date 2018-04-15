@@ -71,6 +71,7 @@ func (c *Client) CreateBillingAgreement(a BillingAgreement) (*CreateAgreementRes
 	}
 
 	req.SetBasicAuth(c.ClientID, c.Secret)
+	req.Header.Set("Authorization", "Bearer "+c.Token.Token)
 	err = c.SendWithAuth(req, response)
 	return response, err
 }
@@ -97,4 +98,17 @@ func (c *Client) ExecuteApprovedAgreement(token string) (*ExecuteAgreementRespon
 	}
 
 	return &e, err
+}
+
+func (c *Client) CancelBillingAgreement(payment_id string) (error) {
+	buf := bytes.NewBuffer([]byte("{\"note\": \"Canceling the profile.\"}"))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s%s", c.APIBase, "/v1/payments/billing-agreements/"+payment_id+"/cancel"), buf)
+	if err != nil {
+		return err
+	}
+	
+	req.SetBasicAuth(c.ClientID, c.Secret)
+	req.Header.Set("Authorization", "Bearer "+c.Token.Token)
+	
+	return c.SendWithAuth(req, nil)
 }
